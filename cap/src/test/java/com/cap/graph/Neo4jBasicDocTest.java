@@ -1,4 +1,4 @@
-package com.xyz.cap;
+package com.cap.graph;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;

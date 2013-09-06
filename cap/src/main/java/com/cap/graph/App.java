@@ -1,4 +1,4 @@
-package com.xyz.cap;
+package com.cap.graph;
 
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;

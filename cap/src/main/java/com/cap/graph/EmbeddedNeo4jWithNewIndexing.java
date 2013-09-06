@@ -1,4 +1,4 @@
-package com.xyz.cap;
+package com.cap.graph;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;

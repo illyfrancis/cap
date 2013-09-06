@@ -1,4 +1,4 @@
-package com.xyz.cap;
+package com.cap.graph;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
