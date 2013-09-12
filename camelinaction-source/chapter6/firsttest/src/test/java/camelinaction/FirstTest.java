@@ -43,8 +43,8 @@ public class FirstTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/inbox")
-                    .to("file://target/outbox");
+//                from("file://target/inbox")
+//                    .to("file://target/outbox");
             }
         };
     }

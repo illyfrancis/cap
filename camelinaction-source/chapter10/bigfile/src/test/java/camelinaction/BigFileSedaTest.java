@@ -16,6 +16,9 @@
  */
 package camelinaction;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -27,10 +30,24 @@ import org.junit.Test;
  */
 public class BigFileSedaTest extends CamelTestSupport {
 
+//    @Test
+    public void testBigFile2() throws Exception {
+        // when the first exchange is done
+        NotifyBuilder notify = new NotifyBuilder(context).whenDoneByIndex(0).create();
+
+        long start = System.currentTimeMillis();
+
+        System.out.println("Waiting to be done with 2 min timeout (use ctrl + c to stop)");
+        notify.matches(2 * 60, TimeUnit.SECONDS);
+
+        long delta = System.currentTimeMillis() - start;
+        System.out.println("Took " + delta / 1000 + " seconds");
+    }
+
     @Test
     public void testBigFile() throws Exception {
         // use 300 sec shutdown timeout
-        context.getShutdownStrategy().setTimeout(300);
+        context.getShutdownStrategy().setTimeout(600);
 
         long start = System.currentTimeMillis();
 
@@ -39,7 +56,7 @@ public class BigFileSedaTest extends CamelTestSupport {
         // hence we just let Camel try to shutdown itself and as it does
         // this graceful it will only shutdown when all the messages
         // on the seda queues has been processed
-        Thread.sleep(1000);
+//        Thread.sleep(1000);
         context.stop();
 
         long delta = System.currentTimeMillis() - start;
@@ -55,11 +72,13 @@ public class BigFileSedaTest extends CamelTestSupport {
                     .log("Starting to process big file: ${header.CamelFileName}")
                     .split(body().tokenize("\n")).streaming()
                         .bean(InventoryService.class, "csvToObject")
-                        .to("seda:update")
+//                        .to("direct:update")
+                        .to("seda://update")
                     .end()
                     .log("Done processing big file: ${header.CamelFileName}");
 
                 from("seda:update?concurrentConsumers=20")
+//                from("direct://update")
                     .bean(InventoryService.class, "updateInventory");
             }
         };

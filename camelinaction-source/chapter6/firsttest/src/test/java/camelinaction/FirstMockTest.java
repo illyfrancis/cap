@@ -81,8 +81,10 @@ public class FirstMockTest extends CamelTestSupport {
     public void testTwoMessages() throws Exception {
         // get the mock endpoint
         MockEndpoint quote = getMockEndpoint("mock:quote");
+//        quote.expectedMessageCount(1);
+        quote.expectedMinimumMessageCount(3);
         // set expectations the two messages arrives in any order
-        quote.expectedBodiesReceivedInAnyOrder("Camel rocks", "Hello Camel");
+//        quote.expectedBodiesReceivedInAnyOrder("Camel rocks", "Hello Camel");
 
         // fire in a messages to Camel
         template.sendBody("jms:topic:quote", "Hello Camel");

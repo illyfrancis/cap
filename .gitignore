@@ -1,5 +1,7 @@
 *.class
 
+camelinaction-source
+
 # Package Files #
 *.jar
 *.war

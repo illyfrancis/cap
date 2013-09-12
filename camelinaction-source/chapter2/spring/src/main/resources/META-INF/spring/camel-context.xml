@@ -39,6 +39,10 @@
       <process ref="downloadLogger"/>
       <to uri="jms:incomingOrders"/>
     </route>
+    <route>
+      <from uri="jms:incomingOrders"/>
+      <process ref="downloadLogger"/>
+    </route>
   </camelContext>
 
 </beans>

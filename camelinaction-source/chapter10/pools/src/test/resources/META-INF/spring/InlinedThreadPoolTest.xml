@@ -33,6 +33,7 @@
                 <!-- this is executed in the threads pool -->
                 <to uri="log:cool"/>
                 <to uri="mock:result"/>
+                <to uri="log:hip"/>                
             </threads>
         </route>
 
