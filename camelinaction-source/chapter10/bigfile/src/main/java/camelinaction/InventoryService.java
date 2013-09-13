@@ -52,5 +52,9 @@ public class InventoryService {
 
         LOG.info("Inventory " + update.getPartId() + " updated");
     }
+    
+    public static void main(String[] args) {
+        LOG.info("ha ha ha");
+    }
 
 }
