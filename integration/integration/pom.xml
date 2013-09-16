@@ -16,6 +16,7 @@
     <activemq-version>5.8.0</activemq-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <ibmmq-version>7.5.0.2</ibmmq-version>
   </properties>
 
   <dependencies>
@@ -58,6 +59,31 @@
       <artifactId>camel-test</artifactId>
       <version>${camel-version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.ibm</groupId>
+      <artifactId>com.ibm.mqjms</artifactId>
+      <version>${ibmmq-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ibm</groupId>
+      <artifactId>com.ibm.mq.jmqi</artifactId>
+      <version>${ibmmq-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ibm</groupId>
+      <artifactId>dhbcore</artifactId>
+      <version>${ibmmq-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xstream</artifactId>
+      <version>${camel-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jaxb</artifactId>
+      <version>${camel-version}</version>
     </dependency>
   </dependencies>
 
