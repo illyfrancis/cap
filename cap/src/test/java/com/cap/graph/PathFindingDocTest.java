@@ -24,6 +24,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.Traversal;
 import org.neo4j.test.TargetDirectory;
 
@@ -39,7 +40,9 @@ public class PathFindingDocTest {
     public static void startDb() {
         String storeDir = TargetDirectory.forTest(PathFindingDocTest.class).graphDbDir(true)
                 .getAbsolutePath();
-        deleteFileOrDirectory(new File(storeDir));
+        System.out.println(storeDir);
+//        deleteFileOrDirectory(new File(storeDir));
+        storeDir = "D:\\Apps\\neo4j-community-2.0.0-M04\\data\\graph.db";
         graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storeDir);
     }
 
