@@ -27,6 +27,7 @@ public class GraphModule extends AbstractModule {
         return service;
     }
 
+    // This is not needed in unit test. Just new the thing!
     @Provides @TestGraphDb @Singleton
     GraphDatabaseService provideTestGraphDatabaseService() {
         System.out.println("test graph service...");

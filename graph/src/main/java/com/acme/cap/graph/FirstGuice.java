@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Transaction;
@@ -14,8 +13,6 @@ import org.neo4j.graphdb.schema.Schema;
 import org.neo4j.graphdb.schema.Schema.IndexState;
 
 import com.google.common.base.Optional;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 public class FirstGuice {
 
@@ -33,14 +30,14 @@ public class FirstGuice {
         db.shutdown();
     }
 
-    public void checkIndexOnLabel() {
+    public void checkIndexOnLabel(Label label) {
         try (Transaction tx = db.beginTx()) {
             Schema schema = db.schema();
 
-            boolean hasIt = isIndexOnLabelCreated(schema, DynamicLabel.label("User"));
+            boolean hasIt = isIndexOnLabelCreated(schema, label);
             System.out.format("has it [%s]\n", hasIt);
 
-            Iterable<IndexDefinition> indexes = schema.getIndexes(DynamicLabel.label("User"));
+            Iterable<IndexDefinition> indexes = schema.getIndexes(label);
 
             for (IndexDefinition indexDefinition : indexes) {
                 IndexState state = schema.getIndexState(indexDefinition);
@@ -75,7 +72,7 @@ public class FirstGuice {
         }
     }
 
-    private void dropIndexOnLabel(Label label) {
+    void dropIndexOnLabel(Label label) {
         try (Transaction tx = db.beginTx()) {
             Schema schema = db.schema();
             for (IndexDefinition indexDefinition : schema.getIndexes(label)) {
@@ -86,21 +83,5 @@ public class FirstGuice {
             tx.success();
         }
     }
-    
-    public static void main(String[] args) {
-        Injector injector = Guice.createInjector(new GraphModule());
-
-        FirstGuice firstOne = injector.getInstance(FirstGuice.class);
-        Label labelOnUser = DynamicLabel.label("User");
-        labelOnUser = NodeLabel.User;
-        firstOne.createIndexOnLabelWithProperty(labelOnUser, "username");
-        firstOne.checkIndexOnLabel();
-        firstOne.dropIndexOnLabel(labelOnUser);
-        firstOne.checkIndexOnLabel();
-        firstOne.shutdownDb();
-    }
-    
-    private static enum NodeLabel implements Label {
-        User, Client
-    }
+   
 }
