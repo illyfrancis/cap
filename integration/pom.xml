@@ -13,6 +13,7 @@
 
   <properties>
     <camel-version>2.11.1</camel-version>
+    <neo4j-version>2.0.0-M05</neo4j-version>
     <activemq-version>5.8.0</activemq-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -98,6 +99,18 @@
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.acme.cap</groupId>
+      <artifactId>graph</artifactId>
+      <version>0.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.neo4j</groupId>
+      <artifactId>neo4j-kernel</artifactId>
+      <version>${neo4j-version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>    
   </dependencies>
 
   <build>

@@ -80,4 +80,9 @@ public class GraphRepository implements UtrRepository {
 
         return nodeId;
     }
+    
+    @Override
+    public String greetings() {
+        return "GraphRepository";
+    }
 }
