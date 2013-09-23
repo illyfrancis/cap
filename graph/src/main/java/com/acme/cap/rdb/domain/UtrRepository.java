@@ -4,10 +4,14 @@ import javax.transaction.Transaction;
 
 import com.acme.cap.rdb.domain.mock.MockTransaction;
 
-public class UtrRepository {
+public class UtrRepository implements Repository {
 
     // putIfAbsent semantic, must be within db transaction
-    public long createOrGetUtrRegister(String transactionRef, long transactionId) throws Exception {
+    /* (non-Javadoc)
+     * @see com.acme.cap.rdb.domain.Repository#createOrGetUtrRegister(java.lang.String, long)
+     */
+    @Override
+    public long createOrGetUtrRegister(TransactionRef transactionRef, long transactionId) throws Exception {
         long utrRegisterId = 0L;
         Transaction tx = new MockTransaction();
         try {
@@ -29,5 +33,11 @@ public class UtrRepository {
             tx.rollback();
         }
         return utrRegisterId;
+    }
+
+    @Override
+    public void setUtrRegisterIdOn(long transactionId, long utrRegisterId) {
+        // TODO Auto-generated method stub
+        
     }
 }
