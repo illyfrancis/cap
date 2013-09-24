@@ -3,6 +3,7 @@ package com.acme.cap.rdb.domain;
 import javax.transaction.Transaction;
 
 import com.acme.cap.rdb.domain.mock.MockTransaction;
+import com.google.common.base.Optional;
 
 public class UtrRepository implements Repository {
 
@@ -47,5 +48,35 @@ public class UtrRepository implements Repository {
         // FIXME need to know about different Transaction types, because each
         // transactionId may refer to different 'transaction' records.
         // update transaction set utr_register_id = {utrRegisterId}
+    }
+
+    @Override
+    public CashTransaction findLatestCashTransaction(long utrRegisterId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public FxDetail findLatestFxDetail(long utrRegisterId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public MutualFundTransaction findLatestMutualFundTransaction(long utrRegisterId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Optional<UtrSnapshot> findLatestUtrSnapShot(long utrRegisterId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public long createUtrSnapshot(UtrSnapshot utrSnapshot) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

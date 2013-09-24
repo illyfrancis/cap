@@ -21,6 +21,10 @@ public class BeanScopeTest extends CamelTestSupport {
         public String doSomething(String body) {
             return this.toString();
         }
+        
+        public String doSomething(int body) {
+            return "Yo";
+        }
     }
     
     @Test
@@ -32,6 +36,7 @@ public class BeanScopeTest extends CamelTestSupport {
         template.sendBody("direct:input", "hello");
         template.sendBody("direct:input", "howdy");
         template.sendBody("direct:input", "hola");
+        template.sendBody("direct:input", 200);
         
         // how to verify that it uses the same instance of SomeBean?
         // I can see in the log but how to assert that?
