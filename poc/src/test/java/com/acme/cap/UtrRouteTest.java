@@ -1,38 +1,45 @@
 package com.acme.cap;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.springframework.dao.DuplicateKeyException;
 
-// TODO - the route test should be implemented and integration test
-// or use NotifyBuilder (http://camel.apache.org/notifybuilder.html) and ch6
+import com.acme.cap.repository.UtrRepository;
+
 public class UtrRouteTest extends CamelTestSupport {
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        UtrRepository repository = new UtrRepository() {
+            
+            @Override
+            public void registerTransaction(long utrRegisterId, long transactionId) {
+                // TODO - is there a better way to do this? possibly using Interceptor?
+                throw new DuplicateKeyException("mock repository");
+            }
+            
+            @Override
+            public long getOrCreateRegister(String transactionRef) {
+                return 0;
+            }
+        }; 
+        
+        UtrService service = new UtrService(repository);
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("utrService", service);
+        return jndi;
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new UtrRoute();
     }
-
-    @Test
-    public void testSomething() throws Exception {
-        // MockEndpoint mock = getMockEndpoint("mock:queue.order");
-        MockEndpoint mock = getMockEndpoint("mock:output");
-        mock.expectedBodiesReceived("hello");
-        template.sendBody("direct:input", "hello");
-        assertMockEndpointsSatisfied();
-    }
     
     @Test
-    public void testMockEndpoint() {
-        MockEndpoint mock = getMockEndpoint("mock:output");
-        template.sendBody("direct:input", "hello");
-
-        System.out.println(">>>>> " + mock.getReceivedCounter());
-        List<Exchange> exchanges = mock.getReceivedExchanges();
-        String body = exchanges.get(0).getIn().getBody(String.class);
-        assertTrue(body.contains("hello"));
+    public void testRetry() {
+        String message = "1, REF_101, A0001, 4999";
+        template.sendBody("direct:input", message);
     }
 }
