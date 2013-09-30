@@ -6,6 +6,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.dao.DuplicateKeyException;
 
+import com.acme.cap.domain.Custody;
+import com.acme.cap.domain.UtrSnapshot;
 import com.acme.cap.repository.UtrRepository;
 
 public class UtrRouteTest extends CamelTestSupport {
@@ -15,14 +17,32 @@ public class UtrRouteTest extends CamelTestSupport {
         UtrRepository repository = new UtrRepository() {
             
             @Override
+            public void addSnapshot(UtrSnapshot merged) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void save(Custody transaction) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
             public void registerTransaction(long utrRegisterId, long transactionId) {
                 // TODO - is there a better way to do this? possibly using Interceptor?
-                throw new DuplicateKeyException("mock repository");
+//                throw new DuplicateKeyException("mock repository");
             }
             
             @Override
             public long getOrCreateRegister(String transactionRef) {
                 return 0;
+            }
+            
+            @Override
+            public UtrSnapshot latestSnapshot(long utrRegisterId) {
+                // TODO Auto-generated method stub
+                return null;
             }
         }; 
         

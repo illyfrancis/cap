@@ -1,23 +1,24 @@
 package com.acme.cap.message;
 
+import com.acme.cap.domain.Transaction;
 import com.google.common.base.Objects;
 
 public class RegisterReference {
 
     private final String transactionRef;
-    private final long transactionId;
+    private final Transaction transaction;
 
-    public static RegisterReference newMessage(String transactionRef, long transactionId) {
-        return new RegisterReference(transactionRef, transactionId);
+    public static RegisterReference newMessage(String transactionRef, Transaction transaction) {
+        return new RegisterReference(transactionRef, transaction);
     }
 
-    private RegisterReference(String transactionRef, long transactionId) {
+    private RegisterReference(String transactionRef, Transaction transaction) {
         this.transactionRef = transactionRef;
-        this.transactionId = transactionId;
+        this.transaction = transaction;
     }
 
-    public long transactionId() {
-        return transactionId;
+    public Transaction transaction() {
+        return transaction;
     }
 
     public String transactionRef() {
@@ -27,8 +28,8 @@ public class RegisterReference {
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
-                .add("txRef", transactionRef)
-                .add("txId", transactionId)
+                .add("transactionRef", transactionRef)
+                .add("transaction", transaction)
                 .toString();
     }
 }

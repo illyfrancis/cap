@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.acme.cap.domain.Transaction;
+import com.acme.cap.domain.Custody;
 import com.acme.cap.message.CreateSnapshot;
 
 public class UtrRouteIntegrationTestWithSpring extends CamelSpringTestSupport {
@@ -21,7 +23,8 @@ public class UtrRouteIntegrationTestWithSpring extends CamelSpringTestSupport {
     @Test
     public void testSomething() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:output");
-        mock.expectedBodiesReceived(CreateSnapshot.newMessage("REF_101", 1, 101));
+        Transaction cash = Custody.of(1, "REF_101", "A0001", 4009L);
+        mock.expectedBodiesReceived(CreateSnapshot.newMessage("REF_101", cash, 101));
         
         String message = "1, REF_101, A0001, 4999";
         template.sendBody("direct:input", message);
@@ -31,7 +34,8 @@ public class UtrRouteIntegrationTestWithSpring extends CamelSpringTestSupport {
     @Test
     public void testMockEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:output");
-        mock.expectedBodiesReceived(CreateSnapshot.newMessage("REF_101", 1, 101));
+        Transaction cash = Custody.of(1, "REF_101", "A0001", 4009L);
+        mock.expectedBodiesReceived(CreateSnapshot.newMessage("REF_101", cash, 101));
         
         String message = "1, REF_101, A0001, 4999";
         template.sendBody("direct:input", message);

@@ -2,18 +2,20 @@ package com.acme.cap.message;
 
 import java.util.Objects;
 
+import com.acme.cap.domain.Transaction;
+
 public class CreateSnapshot {
     private final String transactionRef;
-    private final long transactionId;
+    private final Transaction transaction;
     private final long utrRegisterId;
 
-    public static CreateSnapshot newMessage(String transactionRef, long transactionId, long utrRegisterId) {
-        return new CreateSnapshot(transactionRef, transactionId, utrRegisterId);
+    public static CreateSnapshot newMessage(String transactionRef, Transaction transaction, long utrRegisterId) {
+        return new CreateSnapshot(transactionRef, transaction, utrRegisterId);
     }
 
-    private CreateSnapshot(String transactionRef, long transactionId, long utrRegisterId) {
+    private CreateSnapshot(String transactionRef, Transaction transaction, long utrRegisterId) {
         this.transactionRef = transactionRef;
-        this.transactionId = transactionId;
+        this.transaction = transaction;
         this.utrRegisterId = utrRegisterId;
     }
 
@@ -21,8 +23,8 @@ public class CreateSnapshot {
         return transactionRef;
     }
 
-    public long getTransactionId() {
-        return transactionId;
+    public Transaction transaction() {
+        return transaction;
     }
 
     public long getUtrRegisterId() {
@@ -40,20 +42,20 @@ public class CreateSnapshot {
 
         final CreateSnapshot other = (CreateSnapshot) obj;
         return Objects.equals(this.transactionRef, other.transactionRef)
-                && Objects.equals(this.transactionId, other.transactionId)
+                && Objects.equals(this.transaction, other.transaction)
                 && Objects.equals(this.utrRegisterId, other.utrRegisterId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.transactionId, this.transactionRef, this.utrRegisterId);
+        return Objects.hash(this.transaction, this.transactionRef, this.utrRegisterId);
     }
 
     @Override
     public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
                 .addValue(transactionRef)
-                .addValue(transactionId)
+                .addValue(transaction)
                 .addValue(utrRegisterId)
                 .toString();
     }

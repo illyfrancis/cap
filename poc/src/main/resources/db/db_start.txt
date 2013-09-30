@@ -1,0 +1,4 @@
+# Assume hsqldb is located /file/hsqldb
+
+> java -classpath hsqldb-2.3.0.jar org.hsqldb.server.Server --database.0 file:hsqldb/utrdbfile --dbname.0 utrdb
+

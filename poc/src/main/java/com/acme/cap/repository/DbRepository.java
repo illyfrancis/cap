@@ -14,7 +14,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
+import com.acme.cap.domain.Custody;
 import com.acme.cap.domain.UtrRegister;
+import com.acme.cap.domain.UtrSnapshot;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
@@ -24,12 +26,26 @@ public class DbRepository implements UtrRepository {
 
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert insertUtrRegister;
+    private SimpleJdbcInsert insertTransaction;
 
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.insertUtrRegister = new SimpleJdbcInsert(dataSource)
                 .withTableName("UTR_REGISTER")
                 .usingGeneratedKeyColumns("id");
+        this.insertTransaction = new SimpleJdbcInsert(dataSource).withTableName("CASH_TRANSACTION");
+    }
+
+    @Override
+    public void save(Custody cash) {
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("id", cash.getId());
+        params.put("sonic_ref", cash.getReferenceId());
+        params.put("account", cash.getAccountNumber());
+        params.put("amount", cash.getAmount());
+        params.put("currency", cash.getCurrency());
+        params.put("utr_register_id", cash.getUtrRegisterId());
+        insertTransaction.execute(params);
     }
 
     @Override
@@ -103,9 +119,20 @@ public class DbRepository implements UtrRepository {
     @Override
     public void registerTransaction(long utrRegisterId, long transactionId) {
         log.info("registerTransaction with utrRegisterId({}) and tx id ({})", utrRegisterId, transactionId);
-        // TODO Auto-generated method stub
 
-        int count = this.jdbcTemplate.queryForInt("select count(*) from tuser");
-        log.info("> fetched [{}] users", count);
+        this.jdbcTemplate.update("update cash_transaction set utr_register_id = ? where id = ?",
+                utrRegisterId, transactionId);
+    }
+    
+    @Override
+    public UtrSnapshot latestSnapshot(long utrRegisterId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public void addSnapshot(UtrSnapshot merged) {
+        // TODO Auto-generated method stub
+        
     }
 }

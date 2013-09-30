@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
+import com.acme.cap.domain.Transaction;
+import com.acme.cap.domain.Custody;
 import com.acme.cap.message.CreateSnapshot;
 import com.acme.cap.repository.DbRepository;
 
@@ -30,7 +32,7 @@ public class UtrRouteIntegrationTest extends CamelTestSupport {
         // db.shutdown()
 
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
-        dataSource = builder.addScript("schema.sql").addScript("data.sql").build();
+        dataSource = builder.addScript("db/schema.sql").addScript("db/data.sql").build();
     }
 
     @AfterClass
@@ -56,9 +58,10 @@ public class UtrRouteIntegrationTest extends CamelTestSupport {
     @Test
     public void testSomething() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:output");
-        mock.expectedBodiesReceived(CreateSnapshot.newMessage("REF_101", 1, 101));
+        Transaction cash = Custody.of(2, "REF_105", "A0001", 4009L);
+        mock.expectedBodiesReceived(CreateSnapshot.newMessage("REF_105", cash, 102));
 
-        String message = "1, REF_101, A0001, 4999";
+        String message = "2, REF_105, A0001, 4999";
         template.sendBody("direct:input", message);
         assertMockEndpointsSatisfied();
     }
@@ -66,7 +69,8 @@ public class UtrRouteIntegrationTest extends CamelTestSupport {
     @Test
     public void testMockEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:output");
-        mock.expectedBodiesReceived(CreateSnapshot.newMessage("REF_101", 1, 101));
+        Transaction cash = Custody.of(1, "REF_101", "A0001", 4009L);
+        mock.expectedBodiesReceived(CreateSnapshot.newMessage("REF_101", cash, 101));
 
         String message = "1, REF_101, A0001, 4999";
         template.sendBody("direct:input", message);
