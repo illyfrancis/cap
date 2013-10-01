@@ -7,9 +7,11 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.dao.DuplicateKeyException;
 
 import com.acme.cap.domain.Custody;
 import com.acme.cap.domain.Transaction;
+import com.acme.cap.domain.UtrSnapshot;
 import com.acme.cap.message.CreateSnapshot;
 import com.acme.cap.message.GenerateUtr;
 import com.acme.cap.message.RegisterReference;
@@ -59,19 +61,51 @@ public class UtrServiceTest {
     }
 
     @Test
+    // (expected = DuplicateKeyException.class)
+    public void testRegisterReferenceThrowsDuplicateKeyException() {
+        long transactinoId = 102L;
+        String transactionRef = "REF_101";
+        String accontNumber = "A-001";
+        long amount = 299L;
+        String errorMessage = "duplicate";
+
+        Transaction cash = Custody.of(transactinoId, transactionRef, accontNumber, amount);
+        RegisterReference message = RegisterReference.newMessage(transactionRef, cash);
+        when(repository.getOrCreateRegister(transactionRef)).thenThrow(
+                new DuplicateKeyException(errorMessage));
+
+        try {
+            service.registerReference(message);
+            assertThat("this shouldn't happen", false);
+        } catch (DuplicateKeyException e) {
+            assertThat("expect DuplicateKeyException", true);
+        }
+
+        verify(repository, never()).registerTransaction(anyLong(), anyLong());
+    }
+
+    @Test
     public void testAddSnapshot() {
         long transactinoId = 102L;
         String transactionRef = "REF_101";
         String accontNumber = "A-001";
         long utrRegisterId = 456L;
-        
+
         Transaction transaction = new Custody.Builder(transactinoId, transactionRef, accontNumber).build();
         CreateSnapshot message = CreateSnapshot.newMessage(transactionRef, transaction, utrRegisterId);
-        
+
+        // stubbing...
+        UtrSnapshot snapshot = new UtrSnapshot.Builder(utrRegisterId, 1).build();
+        UtrSnapshot merged = new UtrSnapshot.Builder(utrRegisterId, 1).accountNumber(accontNumber).build();
+        when(repository.getLatestSnapshot(utrRegisterId)).thenReturn(snapshot);
+        when(merger.merge(snapshot, transaction)).thenReturn(merged);
+
         GenerateUtr out = service.addSnapshot(message);
-        
+
         verify(repository).getLatestSnapshot(utrRegisterId);
-//        verify(repository).saveSnapshot(merged);
+        verify(repository).saveSnapshot(merged);
         assertThat("same transaction reference", out.getTransactionRef(), is(transactionRef));
+        assertThat("same merged utr snapshot", out.getUtrSnapshot(), is(merged));
+        assertThat("same merged utr snapshot", out.getUtrSnapshot(), sameInstance(merged));
     }
 }
