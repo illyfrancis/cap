@@ -29,3 +29,12 @@ create table if not exists UTR_SNAPSHOT (
 );
 
 -- alter table CASH_TRANSACTION add constraint FK_UTR_REGISTER foreign key(UTR_REGISTER_ID) references UTR_REGISTER(ID); 
+
+create table if not exists UTR_MESSAGE (
+	UTR_REGISTER_ID bigint not null,
+	VERSION integer not null,
+	SNAPSHOT_VERSION integer not null,
+	SIGNATURE bigint not null,
+	constraint PK_UTR_MESSAGE_ID primary key (UTR_REGISTER_ID, VERSION),
+	constraint FK_UTR_SNAPSHOT foreign key (UTR_REGISTER_ID, SNAPSHOT_VERSION) references UTR_SNAPSHOT(UTR_REGISTER_ID, VERSION)
+);

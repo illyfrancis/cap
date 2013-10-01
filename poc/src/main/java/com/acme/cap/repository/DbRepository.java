@@ -9,12 +9,14 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import com.acme.cap.domain.Custody;
+import com.acme.cap.domain.UtrMessage;
 import com.acme.cap.domain.UtrRegister;
 import com.acme.cap.domain.UtrSnapshot;
 import com.google.common.base.Optional;
@@ -37,14 +39,14 @@ public class DbRepository implements UtrRepository {
     }
 
     @Override
-    public void save(Custody cash) {
+    public void saveTransaction(Custody custody) {
         Map<String, Object> params = Maps.newHashMap();
-        params.put("id", cash.getId());
-        params.put("sonic_ref", cash.getReferenceId());
-        params.put("account", cash.getAccountNumber());
-        params.put("amount", cash.getAmount());
-        params.put("currency", cash.getCurrency());
-        params.put("utr_register_id", cash.getUtrRegisterId());
+        params.put("id", custody.getId());
+        params.put("sonic_ref", custody.getReferenceId());
+        params.put("account", custody.getAccountNumber());
+        params.put("amount", custody.getAmount());
+        params.put("currency", custody.getCurrency());
+        params.put("utr_register_id", custody.getUtrRegisterId());
         insertTransaction.execute(params);
     }
 
@@ -123,16 +125,53 @@ public class DbRepository implements UtrRepository {
         this.jdbcTemplate.update("update cash_transaction set utr_register_id = ? where id = ?",
                 utrRegisterId, transactionId);
     }
-    
+
     @Override
-    public UtrSnapshot latestSnapshot(long utrRegisterId) {
-        // TODO Auto-generated method stub
-        return null;
+    public UtrSnapshot getLatestSnapshot(long utrRegisterId) {
+
+        // FIXME - rewrite
+        String query = "select * from utr_snapshot where utr_register_id = ? and " +
+                "version = (select max(version) from utr_snapshot where utr_register_id = ?)";
+
+        UtrSnapshot snapshot = null;
+        try {
+            UtrSnapshotRowMapper rowMapper = new UtrSnapshotRowMapper();
+            snapshot = this.jdbcTemplate.queryForObject(query, rowMapper, utrRegisterId,
+                    utrRegisterId);
+        } catch (EmptyResultDataAccessException e) {
+            snapshot = UtrSnapshot.newVersion(utrRegisterId);
+        }
+        return snapshot;
+    }
+
+    @Override
+    public void saveSnapshot(UtrSnapshot utrSnapshot) {
+        int row = this.jdbcTemplate.update("insert into utr_snapshot values (?, ?, ?, ?, ?)",
+                utrSnapshot.getUtrRegisterId(),
+                utrSnapshot.getVersion(),
+                utrSnapshot.getAccountNumber(),
+                utrSnapshot.getAmount(),
+                utrSnapshot.getCurrency());
+
+        log.info("> inserted [{}] row", row);
+    }
+
+    static class UtrSnapshotRowMapper implements RowMapper<UtrSnapshot> {
+        @Override
+        public UtrSnapshot mapRow(ResultSet rs, int rowNum) throws SQLException {
+            UtrSnapshot snapshot = new UtrSnapshot.Builder(
+                    rs.getLong("utr_register_id"), rs.getInt("version"))
+                    .accountNumber(rs.getString("account"))
+                    .amount(rs.getLong("amount"))
+                    .currency(rs.getString("currency"))
+                    .build();
+            return snapshot;
+        }
     }
     
     @Override
-    public void addSnapshot(UtrSnapshot merged) {
+    public UtrMessage getLastestUtrMessage(long utrRegisterId) {
         // TODO Auto-generated method stub
-        
+        return null;
     }
 }

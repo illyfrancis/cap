@@ -1,6 +1,9 @@
 package com.acme.cap.domain;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
 
 public class UtrSnapshot {
 
@@ -9,11 +12,11 @@ public class UtrSnapshot {
     private String accountNumber;
     private Long amount;
     private String currency;
-    
+
     public static UtrSnapshot newVersion(long utrRegisterId) {
         return new Builder(utrRegisterId, 0).build();
     }
-    
+
     private UtrSnapshot(Builder builder) {
         this.utrRegisterId = builder.utrRegisterId;
         this.version = builder.version;
@@ -99,4 +102,17 @@ public class UtrSnapshot {
             return new UtrSnapshot(this);
         }
     }
+
+    public static class UtrSnapshotFunnel implements Funnel<UtrSnapshot> {
+
+        private static final long serialVersionUID = -5038983879898300139L;
+
+        @Override
+        public void funnel(UtrSnapshot from, PrimitiveSink into) {
+            into.putString(from.accountNumber, Charsets.UTF_8)
+                    .putLong(from.amount)
+                    .putString(from.currency, Charsets.UTF_8);
+        }
+    }
+
 }

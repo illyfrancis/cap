@@ -8,7 +8,6 @@ public class UtrRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        // TODO - define route
         from("direct:input").routeId("[utr-r1]").tracing()
                 .beanRef("utrService", "filter")
                 .to("seda:utr-r2");
@@ -27,6 +26,7 @@ public class UtrRoute extends RouteBuilder {
 //                        .redeliveryDelay(1000)
 //                        .retryAttemptedLogLevel(LoggingLevel.WARN))
                 .beanRef("utrService", "registerReference")
+                .beanRef("utrService", "addSnapshot")
                 .to("mock:output");
     }
 }

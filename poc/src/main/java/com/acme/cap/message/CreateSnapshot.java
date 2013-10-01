@@ -14,6 +14,7 @@ public class CreateSnapshot {
     }
 
     private CreateSnapshot(String transactionRef, Transaction transaction, long utrRegisterId) {
+        // TODO - copy transaction
         this.transactionRef = transactionRef;
         this.transaction = transaction;
         this.utrRegisterId = utrRegisterId;

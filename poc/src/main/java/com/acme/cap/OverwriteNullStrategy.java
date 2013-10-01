@@ -18,7 +18,7 @@ public class OverwriteNullStrategy implements UtrMergeStrategy {
     public UtrSnapshot merge(UtrSnapshot latest, Transaction transaction) {
         UtrSnapshot snapshot = null;
 
-        // FIXME - rid of instanceof
+        // FIXME - replace instanceof
         if (transaction instanceof Custody) {
             snapshot = mergeCustody(latest, (Custody) transaction);
         } else if (transaction instanceof CorporateAction) {
@@ -56,10 +56,14 @@ public class OverwriteNullStrategy implements UtrMergeStrategy {
                 .currency(latest.getCurrency())
                 .accountNumber(latest.getAccountNumber());
 
+        if (latest.getAccountNumber() == null) {
+            builder.accountNumber(custody.getAccountNumber());
+        }
+
         if (latest.getAmount() == null) {
             builder.amount(custody.getAmount());
         }
-        
+
         if (latest.getCurrency() == null) {
             builder.currency(custody.getCurrency());
         }

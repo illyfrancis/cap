@@ -44,7 +44,9 @@ public class UtrRouteIntegrationTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         DbRepository repository = new DbRepository();
         repository.setDataSource(dataSource);
-        UtrService service = new UtrService(repository);
+        UtrMergeStrategy merger = new OverwriteNullStrategy();
+        
+        UtrService service = new UtrService(repository, merger);
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("utrService", service);
         return jndi;
