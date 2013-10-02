@@ -9,6 +9,7 @@ import com.acme.cap.domain.FXDetail;
 import com.acme.cap.domain.MutualFund;
 import com.acme.cap.domain.Transaction;
 import com.acme.cap.domain.UtrSnapshot;
+import static com.google.common.base.Preconditions.*;
 
 public class OverwriteNullStrategy implements UtrMergeStrategy {
 
@@ -16,20 +17,26 @@ public class OverwriteNullStrategy implements UtrMergeStrategy {
 
     @Override
     public UtrSnapshot merge(UtrSnapshot latest, Transaction transaction) {
-        UtrSnapshot snapshot = null;
+
+        UtrSnapshot mergeInto = checkNotNull(latest, "null UtrSnapshot");
+        Transaction mergeWith = checkNotNull(transaction, "null transaction");
+        UtrSnapshot merged = null;
 
         // FIXME - replace instanceof
         if (transaction instanceof Custody) {
-            snapshot = mergeCustody(latest, (Custody) transaction);
+            merged = mergeCustody(mergeInto, (Custody) mergeWith);
         } else if (transaction instanceof CorporateAction) {
-            snapshot = mergeCorporateAction(latest, (Custody) transaction);
+            merged = mergeCorporateAction(mergeInto, (Custody) mergeWith);
         } else if (transaction instanceof MutualFund) {
-            snapshot = mergeMutualFund(latest, (MutualFund) transaction);
+            merged = mergeMutualFund(mergeInto, (MutualFund) mergeWith);
         } else if (transaction instanceof FXDetail) {
-            snapshot = mergeFxDetail(latest, (FXDetail) transaction);
+            merged = mergeFxDetail(mergeInto, (FXDetail) mergeWith);
+        } else {
+            throw new IllegalArgumentException(
+                    String.format("unknown transaction type %s", mergeWith.getClass().getName()));
         }
 
-        return snapshot;
+        return merged;
     }
 
     private UtrSnapshot mergeFxDetail(UtrSnapshot latest, FXDetail transaction) {

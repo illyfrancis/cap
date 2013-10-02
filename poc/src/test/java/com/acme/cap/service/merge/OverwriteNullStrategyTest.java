@@ -1,18 +1,26 @@
 package com.acme.cap.service.merge;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.acme.cap.domain.Custody;
+import com.acme.cap.domain.Transaction;
 import com.acme.cap.domain.UtrSnapshot;
-import com.acme.cap.service.merge.OverwriteNullStrategy;
 
 public class OverwriteNullStrategyTest {
 
+    OverwriteNullStrategy strategy;
+
+    @Before
+    public void createStrategy() {
+        strategy = new OverwriteNullStrategy();
+    }
+
     @Test
     public void testMergeCustodyTransaction() {
-
         long utrRegisterId = 1L;
         int snapshotVersion = 1;
         Long amount = Long.valueOf(499L);
@@ -31,7 +39,6 @@ public class OverwriteNullStrategyTest {
                 .currency("NZD")
                 .build();
 
-        OverwriteNullStrategy strategy = new OverwriteNullStrategy();
         UtrSnapshot merged = strategy.merge(latest, transaction);
 
         assertEquals(utrRegisterId, merged.getUtrRegisterId());
@@ -44,7 +51,6 @@ public class OverwriteNullStrategyTest {
 
     @Test
     public void testMergeCustodyTransactionForNulls() {
-
         long utrRegisterId = 1L;
         int snapshotVersion = 1;
         String acctNumber = "ACCT-100";
@@ -61,7 +67,6 @@ public class OverwriteNullStrategyTest {
                 .currency(currency)
                 .build();
 
-        OverwriteNullStrategy strategy = new OverwriteNullStrategy();
         UtrSnapshot merged = strategy.merge(latest, transaction);
 
         assertEquals(utrRegisterId, merged.getUtrRegisterId());
@@ -69,6 +74,36 @@ public class OverwriteNullStrategyTest {
         assertEquals(acctNumber, merged.getAccountNumber());
         assertEquals(newAmount, merged.getAmount());
         assertEquals(currency, merged.getCurrency());
+    }
+
+    @Test
+    public void testMergeSucceds() {
+        Custody custody = mock(Custody.class);
+        UtrSnapshot snapshot = mock(UtrSnapshot.class);
+        UtrSnapshot merged = strategy.merge(snapshot, custody);
+        assertNotNull(merged);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testMergeFailsWhenNoLatestSnapshotExists() {
+        Custody custody = mock(Custody.class);
+        strategy.merge(null, custody);
+        assertTrue("shouldn't get here", false);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testMergeFailsWithNullTransaction() {
+        UtrSnapshot snapshot = mock(UtrSnapshot.class);
+        strategy.merge(snapshot, null);
+        assertTrue("shouldn't get here", false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMergeFailsWithUnknownTransaction() {
+        Transaction transaction = mock(Transaction.class);
+        UtrSnapshot snapshot = mock(UtrSnapshot.class);
+        UtrSnapshot merged = strategy.merge(snapshot, transaction);
+        assertNotNull(merged);
     }
 
 }

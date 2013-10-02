@@ -17,7 +17,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import com.acme.cap.domain.Custody;
 import com.acme.cap.domain.UtrMessage;
-import com.acme.cap.domain.UtrRegister;
 import com.acme.cap.domain.UtrSnapshot;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -93,42 +92,15 @@ public class DbRepository implements UtrRepository {
         return newId.longValue();
     }
 
-    public long _getOrCreateRegister(String transactionRef) {
-        log.info("getOrCreateRegister with ref [{}]", transactionRef);
-
-        String sql = "select id, ref from utr_register where ref = ?";
-
-        RowMapper<UtrRegister> rowMapper = new RowMapper<UtrRegister>() {
-            @Override
-            public UtrRegister mapRow(ResultSet rs, int rowNum) throws SQLException {
-                UtrRegister utrRegister = UtrRegister.build(rs.getLong("id"), rs.getString("ref"));
-                return utrRegister;
-            }
-        };
-
-        UtrRegister utrRegister = this.jdbcTemplate.queryForObject(sql, rowMapper, transactionRef);
-
-        log.info("Found UtrRegister [{}]", utrRegister);
-
-        // 1. first look for UtrRegister with transactionRef
-        // 2. if not found, create one
-        // 3. if duplicate exception, retry by throwing another exception
-        // but for other exceptions, just throw it
-        // 4. if all good return the UtrRegister.id
-        return 0;
-    }
-
     @Override
     public void registerTransaction(long utrRegisterId, long transactionId) {
         log.info("registerTransaction with utrRegisterId({}) and tx id ({})", utrRegisterId, transactionId);
-
         this.jdbcTemplate.update("update cash_transaction set utr_register_id = ? where id = ?",
                 utrRegisterId, transactionId);
     }
 
     @Override
     public UtrSnapshot getLatestSnapshot(long utrRegisterId) {
-
         // FIXME - rewrite
         String query = "select * from utr_snapshot where utr_register_id = ? and " +
                 "version = (select max(version) from utr_snapshot where utr_register_id = ?)";
@@ -139,7 +111,7 @@ public class DbRepository implements UtrRepository {
             snapshot = this.jdbcTemplate.queryForObject(query, rowMapper, utrRegisterId,
                     utrRegisterId);
         } catch (EmptyResultDataAccessException e) {
-            snapshot = UtrSnapshot.newVersion(utrRegisterId);
+            // returns null because none found
         }
         return snapshot;
     }

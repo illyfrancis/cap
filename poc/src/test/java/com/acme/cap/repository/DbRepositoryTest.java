@@ -152,7 +152,7 @@ public class DbRepositoryTest {
             repository.saveSnapshot(new UtrSnapshot.Builder(utrRegisterId, 2)
                     .accountNumber(account).build());
         } catch (Exception e) {
-            log.info("What's causing?", e);
+            log.info("What's the exception?", e);
         }
 
         UtrSnapshot snapshot = repository.getLatestSnapshot(utrRegisterId);
@@ -161,10 +161,9 @@ public class DbRepositoryTest {
     }
 
     @Test
-    public void testGetLatestSnapshotThrowsExceptionForNonExisting() {
+    public void testGetLatestSnapShotReturnsNull() {
         long utrRegisterId = -1;
         UtrSnapshot snapshot = repository.getLatestSnapshot(utrRegisterId);
-
-        assertNotNull(snapshot);
+        assertNull(snapshot);
     }
 }

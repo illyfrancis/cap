@@ -110,4 +110,5 @@ public class UtrServiceTest {
         assertThat("same merged utr snapshot", out.getUtrSnapshot(), is(merged));
         assertThat("same merged utr snapshot", out.getUtrSnapshot(), sameInstance(merged));
     }
+    
 }
