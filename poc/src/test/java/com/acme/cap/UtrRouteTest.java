@@ -28,6 +28,7 @@ public class UtrRouteTest extends CamelTestSupport {
 
     @Test
     public void testRetry() {
+        context.setTracing(true);
         String message = "1, REF_101, A0001, 4999";
         template.sendBody("direct:input", message);
     }
