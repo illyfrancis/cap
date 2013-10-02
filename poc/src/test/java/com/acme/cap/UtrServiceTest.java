@@ -22,7 +22,7 @@ public class UtrServiceTest {
     UtrService service;
     UtrRepository repository = mock(UtrRepository.class);
     UtrMergeStrategy merger = mock(UtrMergeStrategy.class);
-
+    
     @Before
     public void createService() {
         service = new UtrService(repository, merger);

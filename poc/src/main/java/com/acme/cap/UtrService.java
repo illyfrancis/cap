@@ -37,7 +37,7 @@ public class UtrService {
                 col.get(2),
                 Long.valueOf(col.get(3)));
 
-        log.info("Filtering [{}] - {}", message, cash);
+        log.info("filtering : transformed [{}] to {}", message, cash);
 
         // save the transaction
         repository.saveTransaction(cash);
@@ -47,7 +47,7 @@ public class UtrService {
     }
 
     public CreateSnapshot registerReference(RegisterReference message) {
-        log.info("Register [{}]", message);
+        log.info("registering [{}]", message);
 
         // 1. get or create UtrRegister from reference id
         String transactionRef = message.transactionRef();
@@ -62,7 +62,7 @@ public class UtrService {
     }
 
     public GenerateUtr addSnapshot(CreateSnapshot message) {
-        log.info("Add snapshot with [{}])", message);
+        log.info("adding snapshot with [{}])", message);
 
         // within a transaction. tx.start();
         // 1. get the latest UtrSnapshot with utrRegisterId
@@ -72,7 +72,7 @@ public class UtrService {
         Transaction transaction = message.transaction();
         UtrSnapshot merged = mergeStrategy.merge(latest, transaction);
 
-        log.info("merged:[{}], latest:[{}], transaction:[{}]", merged, latest, transaction);
+        log.info("merged : [{}], latest:[{}] with transaction:[{}]", merged, latest, transaction);
 
         // 3. save attempt, if duplicate retry via camel
         repository.saveSnapshot(merged);
@@ -81,7 +81,7 @@ public class UtrService {
     }
 
     public void generateUtrMessage(GenerateUtr message) {
-        log.info("Generate UTR with [{}]", message);
+        log.info("generating UTR with [{}]", message);
 
         // validate if needed then stop if invalid
         // could implement as content based router,
@@ -107,7 +107,6 @@ public class UtrService {
         } else {
             // create new and send
         }
-
     }
 
 }

@@ -55,9 +55,9 @@ public class CreateSnapshot {
     @Override
     public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
-                .addValue(transactionRef)
+                .add("transactionRef", transactionRef)
+                .add("utrRegisterId", utrRegisterId)
                 .addValue(transaction)
-                .addValue(utrRegisterId)
                 .toString();
     }
 }

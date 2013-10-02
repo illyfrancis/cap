@@ -11,10 +11,11 @@ import com.acme.cap.repository.UtrRepository;
 
 public class UtrRouteTest extends CamelTestSupport {
 
+    UtrRepository repository = mock(UtrRepository.class);
+    UtrMergeStrategy merger = mock(UtrMergeStrategy.class);
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        UtrRepository repository = mock(UtrRepository.class);
-        UtrMergeStrategy merger = mock(UtrMergeStrategy.class);
         UtrService service = new UtrService(repository, merger);
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("utrService", service);
