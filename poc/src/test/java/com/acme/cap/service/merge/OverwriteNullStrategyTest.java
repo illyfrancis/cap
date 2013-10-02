@@ -1,4 +1,4 @@
-package com.acme.cap;
+package com.acme.cap.service.merge;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.acme.cap.domain.Custody;
 import com.acme.cap.domain.UtrSnapshot;
+import com.acme.cap.service.merge.OverwriteNullStrategy;
 
 public class OverwriteNullStrategyTest {
 

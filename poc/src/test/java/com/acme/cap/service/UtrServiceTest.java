@@ -1,4 +1,4 @@
-package com.acme.cap;
+package com.acme.cap.service;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -16,6 +16,8 @@ import com.acme.cap.message.CreateSnapshot;
 import com.acme.cap.message.GenerateUtr;
 import com.acme.cap.message.RegisterReference;
 import com.acme.cap.repository.UtrRepository;
+import com.acme.cap.service.UtrService;
+import com.acme.cap.service.merge.UtrMergeStrategy;
 
 public class UtrServiceTest {
 
@@ -43,11 +45,11 @@ public class UtrServiceTest {
     public void testRegisterReferenceReturnsExpectedIdAndRef() {
         long transactinoId = 102L;
         String transactionRef = "REF_101";
-        String accontNumber = "A-001";
+        String accountNumber = "A-001";
         long amount = 299L;
         long utrRegisterId = 456L;
 
-        Transaction cash = Custody.of(transactinoId, transactionRef, accontNumber, amount);
+        Transaction cash = Custody.of(transactinoId, transactionRef, accountNumber, amount);
         RegisterReference message = RegisterReference.newMessage(transactionRef, cash);
         when(repository.getOrCreateRegister(transactionRef)).thenReturn(utrRegisterId);
 
@@ -65,11 +67,11 @@ public class UtrServiceTest {
     public void testRegisterReferenceThrowsDuplicateKeyException() {
         long transactinoId = 102L;
         String transactionRef = "REF_101";
-        String accontNumber = "A-001";
+        String accountNumber = "A-001";
         long amount = 299L;
         String errorMessage = "duplicate";
 
-        Transaction cash = Custody.of(transactinoId, transactionRef, accontNumber, amount);
+        Transaction cash = Custody.of(transactinoId, transactionRef, accountNumber, amount);
         RegisterReference message = RegisterReference.newMessage(transactionRef, cash);
         when(repository.getOrCreateRegister(transactionRef)).thenThrow(
                 new DuplicateKeyException(errorMessage));
@@ -88,15 +90,15 @@ public class UtrServiceTest {
     public void testAddSnapshot() {
         long transactinoId = 102L;
         String transactionRef = "REF_101";
-        String accontNumber = "A-001";
+        String accountNumber = "A-001";
         long utrRegisterId = 456L;
 
-        Transaction transaction = new Custody.Builder(transactinoId, transactionRef, accontNumber).build();
+        Transaction transaction = new Custody.Builder(transactinoId, transactionRef, accountNumber).build();
         CreateSnapshot message = CreateSnapshot.newMessage(transactionRef, transaction, utrRegisterId);
 
         // stubbing...
         UtrSnapshot snapshot = new UtrSnapshot.Builder(utrRegisterId, 1).build();
-        UtrSnapshot merged = new UtrSnapshot.Builder(utrRegisterId, 1).accountNumber(accontNumber).build();
+        UtrSnapshot merged = new UtrSnapshot.Builder(utrRegisterId, 1).accountNumber(accountNumber).build();
         when(repository.getLatestSnapshot(utrRegisterId)).thenReturn(snapshot);
         when(merger.merge(snapshot, transaction)).thenReturn(merged);
 

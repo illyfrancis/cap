@@ -8,6 +8,8 @@ import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,7 +21,9 @@ import com.acme.cap.repository.DbRepository.UtrSnapshotRowMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:META-INF/spring/serverdb.xml")
-public class DbRepositoryServerTest {
+public class DbRepositoryTest {
+    
+    Logger log = LoggerFactory.getLogger(getClass());
 
     /*
      * @Autowired private ApplicationContext context;
@@ -97,7 +101,7 @@ public class DbRepositoryServerTest {
     @Test
     public void testSaveUtrSnapshot() {
         long utrRegisterId = System.currentTimeMillis();
-        int version = 1;
+        int version = 3;
         UtrSnapshot utrSnapshot = new UtrSnapshot.Builder(utrRegisterId, version)
                 .accountNumber("ACCT-1").build();
         repository.saveSnapshot(utrSnapshot);
@@ -135,17 +139,21 @@ public class DbRepositoryServerTest {
         long utrRegisterId = System.currentTimeMillis();
         String account = "acct-001";
 
-        // version 1
-        repository.saveSnapshot(new UtrSnapshot.Builder(utrRegisterId, 1)
-                .accountNumber(account).build());
+        try {
+            // version 1
+            repository.saveSnapshot(new UtrSnapshot.Builder(utrRegisterId, 1)
+                    .accountNumber(account).build());
 
-        // version 9
-        repository.saveSnapshot(new UtrSnapshot.Builder(utrRegisterId, 9)
-                .accountNumber(account).build());
+            // version 9
+            repository.saveSnapshot(new UtrSnapshot.Builder(utrRegisterId, 9)
+                    .accountNumber(account).build());
 
-        // version 2
-        repository.saveSnapshot(new UtrSnapshot.Builder(utrRegisterId, 2)
-                .accountNumber(account).build());
+            // version 2
+            repository.saveSnapshot(new UtrSnapshot.Builder(utrRegisterId, 2)
+                    .accountNumber(account).build());
+        } catch (Exception e) {
+            log.info("What's causing?", e);
+        }
 
         UtrSnapshot snapshot = repository.getLatestSnapshot(utrRegisterId);
         assertEquals(9, snapshot.getVersion());
@@ -156,8 +164,7 @@ public class DbRepositoryServerTest {
     public void testGetLatestSnapshotThrowsExceptionForNonExisting() {
         long utrRegisterId = -1;
         UtrSnapshot snapshot = repository.getLatestSnapshot(utrRegisterId);
-        
+
         assertNotNull(snapshot);
-        System.out.println(">>>> snapshot : " + snapshot);
     }
 }

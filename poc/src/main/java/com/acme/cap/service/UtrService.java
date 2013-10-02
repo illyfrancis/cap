@@ -1,4 +1,4 @@
-package com.acme.cap;
+package com.acme.cap.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,7 @@ import com.acme.cap.message.CreateSnapshot;
 import com.acme.cap.message.GenerateUtr;
 import com.acme.cap.message.RegisterReference;
 import com.acme.cap.repository.UtrRepository;
+import com.acme.cap.service.merge.UtrMergeStrategy;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;

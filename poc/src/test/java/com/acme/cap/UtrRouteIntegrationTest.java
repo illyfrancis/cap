@@ -9,6 +9,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -17,6 +18,9 @@ import com.acme.cap.domain.Transaction;
 import com.acme.cap.domain.Custody;
 import com.acme.cap.message.CreateSnapshot;
 import com.acme.cap.repository.DbRepository;
+import com.acme.cap.service.UtrService;
+import com.acme.cap.service.merge.OverwriteNullStrategy;
+import com.acme.cap.service.merge.UtrMergeStrategy;
 
 public class UtrRouteIntegrationTest extends CamelTestSupport {
 
@@ -57,6 +61,7 @@ public class UtrRouteIntegrationTest extends CamelTestSupport {
         return new UtrRoute();
     }
 
+    @Ignore
     @Test
     public void testSomething() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:output");
@@ -68,6 +73,7 @@ public class UtrRouteIntegrationTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Ignore
     @Test
     public void testMockEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:output");

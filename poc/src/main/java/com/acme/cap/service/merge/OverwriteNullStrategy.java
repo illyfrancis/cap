@@ -1,4 +1,4 @@
-package com.acme.cap;
+package com.acme.cap.service.merge;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -168,7 +168,7 @@ public class DbRepository implements UtrRepository {
             return snapshot;
         }
     }
-    
+
     @Override
     public UtrMessage getLastestUtrMessage(long utrRegisterId) {
         // TODO Auto-generated method stub

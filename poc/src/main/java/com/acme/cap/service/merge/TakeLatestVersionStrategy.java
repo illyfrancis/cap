@@ -1,4 +1,4 @@
-package com.acme.cap;
+package com.acme.cap.service.merge;
 
 import com.acme.cap.domain.Transaction;
 import com.acme.cap.domain.UtrSnapshot;

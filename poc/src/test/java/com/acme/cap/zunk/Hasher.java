@@ -1,4 +1,4 @@
-package com.acme.cap;
+package com.acme.cap.zunk;
 
 import org.junit.Test;
 
@@ -19,6 +19,8 @@ public class Hasher {
                 .currency("USD").build();
 
         Funnel<UtrSnapshot> funnel = new Funnel<UtrSnapshot>() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void funnel(UtrSnapshot from, PrimitiveSink into) {
                 into.putLong(from.getUtrRegisterId())
