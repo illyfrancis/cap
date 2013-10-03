@@ -88,14 +88,14 @@ public class OverwriteNullStrategyTest {
     public void testMergeFailsWhenNoLatestSnapshotExists() {
         Custody custody = mock(Custody.class);
         strategy.merge(null, custody);
-        assertTrue("shouldn't get here", false);
+        fail("shouldn't get here");
     }
 
     @Test(expected = NullPointerException.class)
     public void testMergeFailsWithNullTransaction() {
         UtrSnapshot snapshot = mock(UtrSnapshot.class);
         strategy.merge(snapshot, null);
-        assertTrue("shouldn't get here", false);
+        fail("shouldn't get here");
     }
 
     @Test(expected = IllegalArgumentException.class)

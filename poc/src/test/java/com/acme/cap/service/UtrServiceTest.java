@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DuplicateKeyException;
@@ -16,7 +17,6 @@ import com.acme.cap.message.CreateSnapshot;
 import com.acme.cap.message.GenerateUtr;
 import com.acme.cap.message.RegisterReference;
 import com.acme.cap.repository.UtrRepository;
-import com.acme.cap.service.UtrService;
 import com.acme.cap.service.merge.UtrMergeStrategy;
 
 public class UtrServiceTest {
@@ -78,7 +78,7 @@ public class UtrServiceTest {
 
         try {
             service.registerReference(message);
-            assertThat("this shouldn't happen", false);
+            Assert.fail("this shouldn't happen");
         } catch (DuplicateKeyException e) {
             assertThat("expect DuplicateKeyException", true);
         }

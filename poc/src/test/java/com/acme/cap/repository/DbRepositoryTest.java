@@ -58,7 +58,7 @@ public class DbRepositoryTest {
         try {
             repository.addUtrRegister(ref);
         } catch (Throwable e) {
-            assertTrue("first insert should pass", false);
+            fail("first insert should pass");
         }
 
         // but this should throw DuplicateKeyException
