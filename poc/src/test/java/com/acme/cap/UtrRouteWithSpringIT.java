@@ -15,7 +15,7 @@ import com.acme.cap.domain.Custody;
 import com.acme.cap.message.CreateSnapshot;
 import com.google.common.base.Joiner;
 
-public class UtrRouteIntegrationTestWithSpring extends CamelSpringTestSupport {
+public class UtrRouteWithSpringIT extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
