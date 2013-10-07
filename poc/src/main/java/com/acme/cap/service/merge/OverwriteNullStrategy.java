@@ -22,7 +22,7 @@ public class OverwriteNullStrategy implements UtrMergeStrategy {
         Transaction mergeWith = checkNotNull(transaction, "null transaction");
         UtrSnapshot merged = null;
 
-        // FIXME - replace instanceof
+        // FIXME - replace instanceof with visitor
         if (transaction instanceof Custody) {
             merged = mergeCustody(mergeInto, (Custody) mergeWith);
         } else if (transaction instanceof CorporateAction) {
